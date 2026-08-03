@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sec 1 Survival Kit</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#dff6ff,#f9fbff);
+padding:30px;
+color:#333;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+font-size:40px;
+margin-bottom:10px;
+color:#2155CD;
+}
+
+.subtitle{
+text-align:center;
+margin-bottom:35px;
+color:#666;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:20px;
+margin-bottom:40px;
+}
+
+.card{
+background:white;
+border-radius:18px;
+padding:22px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+}
+
+.card h2{
+margin-bottom:12px;
+color:#2155CD;
+}
+
+.card ul{
+padding-left:20px;
+line-height:1.8;
+}
+
+.forum{
+background:white;
+border-radius:20px;
+padding:25px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.forum h2{
+color:#2155CD;
+margin-bottom:20px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:12px;
+font-size:15px;
+}
+
+textarea{
+resize:none;
+height:90px;
+}
+
+button{
+background:#2155CD;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:10px;
+cursor:pointer;
+transition:.25s;
+font-size:15px;
+}
+
+button:hover{
+background:#163f99;
+}
+
+.post{
+margin-top:18px;
+padding:16px;
+border-radius:15px;
+background:#f7fbff;
+animation:fade .4s;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:none;}
+}
+
+.name{
+font-weight:bold;
+color:#2155CD;
+margin-bottom:5px;
+}
+
+.time{
+font-size:12px;
+color:#888;
+margin-bottom:10px;
+}
+
+.actions{
+margin-top:12px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.replyBox{
+margin-top:10px;
+display:none;
+}
+
+.reply{
+background:white;
+padding:10px;
+border-radius:10px;
+margin-top:8px;
+margin-left:18px;
+border-left:4px solid #2155CD;
+}
+
+.search{
+margin-bottom:18px;
+}
+
+.footer{
+text-align:center;
+margin-top:40px;
+color:#666;
+font-size:14px;
+}
+
+.badge{
+display:inline-block;
+background:#2155CD;
+color:white;
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
+margin-left:6px;
+}
+
+.tip{
+background:#e9f3ff;
+padding:15px;
+border-radius:12px;
+margin-bottom:20px;
+}
+
+.tip strong{
+color:#2155CD;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎒 Sec 1 Survival Kit</h1>
+
+<p class="subtitle">
+Welcome to your first year of secondary school!
+Everything you need is here—including a place to make new friends.
+</p>
+
+<div class="grid">
+
+<div class="card">
+<h2>📚 School Tips</h2>
+<ul>
+<li>Bring your timetable daily.</li>
+<li>Label your belongings.</li>
+<li>Don't be afraid to ask seniors for help.</li>
+<li>Check your homework every afternoon.</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>🗺️ Find Your Way</h2>
+<ul>
+<li>Library</li>
+<li>Canteen</li>
+<li>Hall</li>
+<li>Science Labs</li>
+<li>General Office</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>😊 First-Day Advice</h2>
+<ul>
+<li>Smile and introduce yourself.</li>
+<li>Join CCA trials.</li>
+<li>Everyone is new too!</li>
+<li>It's okay to be nervous.</li>
+</ul>
+</div>
+
+</div>
+
+<div class="forum">
+
+<h2>💬 Meet New Friends Forum</h2>
+
+<div class="tip">
+<strong>Idea:</strong>
+Introduce yourself, share your hobbies, ask if anyone wants to sit together during recess, or find classmates with similar interests!
+</div>
+
+<input class="search" id="search" placeholder="🔍 Search posts...">
+
+<input id="name" placeholder="Nickname">
+
+<textarea id="message" placeholder="Say hello! Example: Hi! I love badminton and reading 📚"></textarea>
+
+<button onclick="addPost()">Post Message</button>
+
+<div id="posts"></div>
+
+</div>
+
+<div class="footer">
+Made with ❤️ for our Secondary 1 students
+</div>
+
+</div>
+
+<script>
+
+let posts=JSON.parse(localStorage.getItem("sec1Forum"))||[
+{
+name:"Jamie",
+text:"Hi everyone! I like basketball 🏀 Anyone joining the school team?",
+likes:4,
+time:"Today",
+replies:[
+{
+name:"Alicia",
+text:"Me! Maybe we'll see each other at trials!"
+}
+]
+},
+{
+name:"Ethan",
+text:"Looking for people who enjoy coding 💻",
+likes:2,
+time:"Today",
+replies:[]
+}
+];
+
+function save(){
+localStorage.setItem("sec1Forum",JSON.stringify(posts));
+}
+
+function render(){
+
+const keyword=document.getElementById("search").value.toLowerCase();
+
+const container=document.getElementById("posts");
+container.innerHTML="";
+
+posts.forEach((post,index)=>{
+
+if(
+!post.name.toLowerCase().includes(keyword)
+&&
+!post.text.toLowerCase().includes(keyword)
+)return;
+
+const div=document.createElement("div");
+div.className="post";
+
+let repliesHTML="";
+
+post.replies.forEach(r=>{
+repliesHTML+=`
+<div class="reply">
+<strong>${r.name}</strong><br>
+${r.text}
+</div>
+`;
+});
+
+div.innerHTML=`
+
+<div class="name">
+${post.name}
+<span class="badge">Student</span>
+</div>
+
+<div class="time">${post.time}</div>
+
+<div>${post.text}</div>
+
+<div class="actions">
+
+<button onclick="likePost(${index})">
+❤️ ${post.likes}
+</button>
+
+<button onclick="toggleReply(${index})">
+💬 Reply
+</button>
+
+</div>
+
+<div class="replyBox" id="reply${index}">
+<input id="replyName${index}" placeholder="Nickname">
+
+<input id="replyText${index}" placeholder="Write a reply">
+
+<button onclick="submitReply(${index})">
+Send Reply
+</button>
+</div>
+
+${repliesHTML}
+
+`;
+
+container.appendChild(div);
+
+});
+
+}
+
+function addPost(){
+
+const name=document.getElementById("name").value.trim()||"Anonymous";
+
+const text=document.getElementById("message").value.trim();
+
+if(text=="") return;
+
+posts.unshift({
+name:name,
+text:text,
+likes:0,
+time:new Date().toLocaleString(),
+replies:[]
+});
+
+document.getElementById("message").value="";
+
+save();
+render();
+
+}
+
+function likePost(i){
+
+posts[i].likes++;
+
+save();
+render();
+
+}
+
+function toggleReply(i){
+
+const box=document.getElementById("reply"+i);
+
+if(box.style.display=="block")
+box.style.display="none";
+else
+box.style.display="block";
+
+}
+
+function submitReply(i){
+
+const name=document.getElementById("replyName"+i).value.trim()||"Anonymous";
+
+const text=document.getElementById("replyText"+i).value.trim();
+
+if(text=="") return;
+
+posts[i].replies.push({
+name:name,
+text:text
+});
+
+save();
+render();
+
+}
+
+document.getElementById("search").addEventListener("input",render);
+
+render();
+
+</script>
+
+</body>
+</html>
